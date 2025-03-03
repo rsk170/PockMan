@@ -1,5 +1,7 @@
 # PockMan 🔎
 
+![Logo](img/logo.jpeg)
+
 ## Overview 🎯
 
 PockMan is an open-source tool designed to identify potential ligand binding pockets in protein structures. It uses a voxel-based grid projection system to analyze protein surface features and detect potential binding sites.
