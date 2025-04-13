@@ -60,7 +60,7 @@ pip uninstall PockMan
 
 ## Commands ⚙️
 ```bash
-usage: pock_man.py [-h] [--grid_size GRID_SIZE] [--border BORDER] [--diagonals] pdb_input
+usage: python pock_man.py [-h] [--grid_size GRID_SIZE] [--border BORDER] [--diagonals] pdb_input
 
 PockMan is a Python script built to predict ligand binding sites of proteins from their .pdb files.
 

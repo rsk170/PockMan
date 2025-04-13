@@ -4,4 +4,4 @@ __pycache__/
 dist/
 pdb_files/
 pockets.pdb
-binding_site.txt
+*.txt

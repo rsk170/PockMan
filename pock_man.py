@@ -2,8 +2,11 @@
 import argparse
 import os
 import sys
-from grid import ProteinGrid
-from pocket_detector import PocketDetector
+from pockman.protein import ProteinStructure
+from pockman.protein_grid import ProteinGrid
+from pockman.projector import ProteinProjector
+from pockman.detector import PSPDetector, PocketCluster
+from pockman.atoms_finder import NearbyAtomsFinder
 
 from pdb_handler import PDBHandler
 
@@ -39,28 +42,35 @@ def main():
         if downloaded_path is None:
             print("Failed to obtain PDB file. Exiting.")
             sys.exit(1)
-        pdb_input = downloaded_path
+        pdb_file = downloaded_path
     else:
-        pdb_input = pdb_input
+        pdb_file = pdb_input
 
-    # Initialize and project the protein grid
-    protein_grid = ProteinGrid(pdb_input, grid_size=grid_size, border=border)
-    print("Protein grid shape:", protein_grid.get_grid_shape())
+    pdb_id = os.path.splitext(os.path.basename(pdb_file))[0]
 
-    # Perform pocket detection
-    pocket_detector = PocketDetector(protein_grid, include_diagonals=include_diagonals)
-    pocket_detector.detect_pockets()
-    pocket_detector.save_pockets_to_pdb()
+    # Load the protein structure
+    protein = ProteinStructure(pdb_id, pdb_file)
 
-    # Find nearby residues
-    residues = pocket_detector.find_nearby_residues()
-    if residues:
-        print(f"Found {len(residues)} residues near binding pockets.")
-    else:
-        print("No binding site residues detected.")
+    # Initialize the grid parameters based on the provided grid size and border
+    grid = ProteinGrid(protein, grid_size=grid_size, border=border)
+    grid.print_grid_shapes()
 
-    # Save binding site residues to a text file
-    pocket_detector.save_binding_sites(residues)
+    # Project protein atoms onto the grid
+    projector = ProteinProjector(protein, grid)
+    projector.project_atoms()
+
+    # Perform PSP pocket detection; include diagonals if requested.
+    detector = PSPDetector(grid)
+    detector.search(diagonals=include_diagonals)
+
+    # Cluster the detected pockets and compute their scores.
+    cluster = PocketCluster(grid, protein)
+    cluster.detect_pockets(diagonals=include_diagonals, cutoff=4)
+    sorted_pockets = cluster.get_sorted_pockets()
+
+    # Find nearby atoms (residues) around the binding pockets and save to a file.
+    finder = NearbyAtomsFinder(protein, grid)
+    finder.find_nearby_atoms(sorted_pockets, threshold=4.0, file_tag=pdb_id, include_het=False)
 
 if __name__ == "__main__":
     main()
