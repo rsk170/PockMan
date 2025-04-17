@@ -45,8 +45,9 @@ class NearbyAtomsFinder:
                                     atoms.append([atom.coord[0], atom.coord[1], atom.coord[2]])
                                     res = atom.get_parent()
                                     chain = res.get_parent()
-                                    result += f"ATOM {atom.serial_number:5d}  {atom.name:<4}{res.resname:>3} {chain.id}{res.id[1]:4d}    "
-                                    result += f"{atom.coord[0]:8.3f}{atom.coord[1]:8.3f}{atom.coord[2]:8.3f}  1.00 {atom.bfactor:6.2f}           {atom.element:>2}\n"
+                                    icode = res.id[2].strip() or ""
+                                    resnum = f"{res.id[1]}{icode}"
+                                    result = result + f"ATOM {atom.serial_number:5d}  {atom.name:<4}{res.resname:>3} {chain.id}{resnum:>4}    {atom.coord[0]:8.3f}{atom.coord[1]:8.3f}{atom.coord[2]:8.3f}  1.00 {atom.bfactor:6.2f}           {atom.element:>2}\n"
                     else:
                         distance = (((x - atom.coord[0]) ** 2) +
                                     ((y - atom.coord[1]) ** 2) +
@@ -56,8 +57,9 @@ class NearbyAtomsFinder:
                                 atoms.append([atom.coord[0], atom.coord[1], atom.coord[2]])
                                 res = atom.get_parent()
                                 chain = res.get_parent()
-                                result += f"ATOM {atom.serial_number:5d}  {atom.name:<4}{res.resname:>3} {chain.id}{res.id[1]:4d}    "
-                                result += f"{atom.coord[0]:8.3f}{atom.coord[1]:8.3f}{atom.coord[2]:8.3f}  1.00 {atom.bfactor:6.2f}           {atom.element:>2}\n"
+                                icode = res.id[2].strip() or ""
+                                resnum = f"{res.id[1]}{icode}"
+                                result = result + f"ATOM {atom.serial_number:5d}  {atom.name:<4}{res.resname:>3} {chain.id}{resnum:>4}    {atom.coord[0]:8.3f}{atom.coord[1]:8.3f}{atom.coord[2]:8.3f}  1.00 {atom.bfactor:6.2f}           {atom.element:>2}\n"
             result += "\n"
         print(f"\033[92m✅ Nearby atom detection completed.\033[0m")
         output_filename = f"Ligand_binding_sites2_{file_tag}.txt"

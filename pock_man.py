@@ -7,6 +7,7 @@ from pockman.protein_grid import ProteinGrid
 from pockman.projector import ProteinProjector
 from pockman.detector import PSPDetector, PocketCluster
 from pockman.atoms_finder import NearbyAtomsFinder
+from quotes.import_quote import Quote
 
 from pdb_handler import PDBHandler
 
@@ -71,6 +72,10 @@ def main():
     # Find nearby atoms (residues) around the binding pockets and save to a file.
     finder = NearbyAtomsFinder(protein, grid)
     finder.find_nearby_atoms(sorted_pockets, threshold=4.0, file_tag=pdb_id, include_het=False)
+
+    # Print a final quote, for aesthetics, to make it more beautiful
+    quoting=Quote("quotes/quotes.json")
+    quoting.get_quote()
 
 if __name__ == "__main__":
     main()

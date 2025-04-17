@@ -34,7 +34,7 @@ pip install numpy biopython requests setuptools
    ```
 2. Build the package and install it:
    ```bash
-   python setup.py sdist
+   python3 setup.py sdist
    pip install dist/PockMan-1.0.tar.gz
    ```
 
@@ -60,7 +60,7 @@ pip uninstall PockMan
 
 ## Commands ⚙️
 ```bash
-usage: python pock_man.py [-h] [--grid_size GRID_SIZE] [--border BORDER] [--diagonals] pdb_input
+usage: python3 pock_man.py [-h] [--grid_size GRID_SIZE] [--border BORDER] [--diagonals] pdb_input
 
 PockMan is a Python script built to predict ligand binding sites of proteins from their .pdb files.
 
