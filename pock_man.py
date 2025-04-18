@@ -45,7 +45,15 @@ def main():
             sys.exit(1)
         pdb_file = downloaded_path
     else:
-        pdb_file = pdb_input
+        cleaned_filepath = os.path.join(
+        os.path.dirname(pdb_input),
+        os.path.splitext(os.path.basename(pdb_input))[0] + "_clean.pdb"
+        )
+        print(f"Cleaning local PDB file: {pdb_input}")
+        pdb_file = PDBHandler.clean_pdb(pdb_input, cleaned_filepath)
+        if pdb_file is None:
+            print("Failed to clean PDB file. Exiting.")
+            sys.exit(1)
 
     pdb_id = os.path.splitext(os.path.basename(pdb_file))[0]
 
