@@ -7,9 +7,9 @@ from pockman.protein_grid import ProteinGrid
 from pockman.projector import ProteinProjector
 from pockman.detector import PSPDetector, PocketCluster
 from pockman.atoms_finder import NearbyAtomsFinder
-from quotes.import_quote import Quote
+from pockman.quotes.import_quote import Quote
 
-from pdb_handler import PDBHandler
+from pockman.pdb_handler import PDBHandler
 
 def main():
     # If no command-line arguments are provided, ask the user interactively.
@@ -74,7 +74,7 @@ def main():
     finder.find_nearby_atoms(sorted_pockets, threshold=4.0, file_tag=pdb_id, include_het=False)
 
     # Print a final quote, for aesthetics, to make it more beautiful
-    quoting=Quote("quotes/quotes.json")
+    quoting=Quote("pockman/quotes/quotes.json")
     quoting.get_quote()
 
 if __name__ == "__main__":

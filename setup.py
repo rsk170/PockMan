@@ -4,20 +4,27 @@ setup(
     name='PockMan',
     version='1.0',
     packages=find_packages(),
-    py_modules=['pdb_handler'],
-    scripts=['pock_man.py'],
+    include_package_data=True,
+    package_data={
+        'pockman.quotes': ['quotes.json'],
+    },
+    entry_points={
+        'console_scripts': [
+            'pockman = pock_man:main',  # Assuming main() is your entry point
+        ],
+    },
     install_requires=[
         'numpy>=1.24.4',
         'biopython>=1.83',
         'tqdm>=4.64.0',
+        'requests>=2.28.0'
     ],
     author='',
     description='',
     url='',
 )
 
-if __name__ is not None:
-    print(r"""
+print(r"""
 PPPPPPPPPPPPPPPPP                                       kkkkkkkk
 P::::::::::::::::P                                      k::::::k
 P::::::PPPPPP:::::P                                     k::::::k
@@ -39,6 +46,4 @@ PockMan Installed!
 Ready to predict binding sites!
 
     """)
-else:
-    print("Oops! Something went wrong during installation.")
 

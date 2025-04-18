@@ -5,3 +5,4 @@ dist/
 pdb_files/
 pockets.pdb
 *.txt
+build/

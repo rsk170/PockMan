@@ -21,7 +21,7 @@ PockMan is an open-source tool designed to identify potential ligand binding poc
 Ensure you have Python 3 installed. You also need the following dependencies:
 
 ```bash
-pip install numpy biopython requests setuptools
+pip install numpy biopython tqdm requests setuptools
 ```
 
 ### Installing the Package ⚙️
@@ -60,7 +60,7 @@ pip uninstall PockMan
 
 ## Commands ⚙️
 ```bash
-usage: python3 pock_man.py [-h] [--grid_size GRID_SIZE] [--border BORDER] [--diagonals] pdb_input
+usage: pockman [-h] [--grid_size GRID_SIZE] [--border BORDER] [--diagonals] pdb_input
 
 PockMan is a Python script built to predict ligand binding sites of proteins from their .pdb files.
 
@@ -75,29 +75,28 @@ optional arguments:
   --diagonals           Include diagonal pocket detection for a more comprehensive search.
 ```
 
-
 ## Usage 🖥️
 
 ### Command Line Execution
 Run the program from the terminal with a local PDB file:
 ```bash
-pock_man.py 1a28.pdb --grid_size 1.0 --border 5.0
+pockman 1a28.pdb --grid_size 1.0 --border 5.0
 ```
 
 To use a PDB ID and download it automatically:
 ```bash
-pock_man.py 1a28 --grid_size 1.0 --border 5.0
+pockman 1a28 --grid_size 1.0 --border 5.0
 ```
 
 To enable diagonal pocket detection, add the `--diagonals` flag:
 ```bash
-pock_man.py 1a28.pdb --grid_size 1.0 --border 5.0 --diagonals
+pockman 1a28.pdb --grid_size 1.0 --border 5.0 --diagonals
 ```
 
 ### Interactive Mode 📝
 If no command-line arguments are provided, the script will prompt for input:
 ```bash
-$ pock_man.py
+$ pockman
 Enter the path to the input PDB file (or a PDB ID to use): myprotein.pdb
 Enter grid size in Angstroms (default: 1.0): 1.0
 Enter border size in Angstroms (default: 5.0): 5.0
@@ -119,4 +118,4 @@ Found 12 residues near binding pockets.
 - Your Name
 
 ## Acknowledgments 🎖️
-This tool uses **Biopython** for PDB processing and **NumPy** for grid computations.
+This tool uses **Biopython** for PDB processing, **NumPy** for grid computations, and **tqdm** for progress bars.
