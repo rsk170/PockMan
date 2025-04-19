@@ -10,7 +10,7 @@ from pockman.atoms_finder import NearbyAtomsFinder
 from pockman.quotes.import_quote import Quote
 
 from pockman.pdb_handler import PDBHandler
-from pockman.visualization import save_chimera, save_pymol
+from pockman.visualization import Visualizer
 
 def main():
     # If no command-line arguments are provided, ask the user interactively.
@@ -82,13 +82,13 @@ def main():
     finder = NearbyAtomsFinder(protein, grid)
     finder.find_nearby_atoms(sorted_pockets, threshold=4.0, file_tag=pdb_id, include_het=False)
 
+    # Save visualization scripts
+    Visualizer.save_chimera(sorted_pockets, grid, pdb_id)
+    Visualizer.save_pymol(sorted_pockets, grid, pdb_id)
+
     # Print a final quote, for aesthetics, to make it more beautiful
     quoting=Quote("pockman/quotes/quotes.json")
     quoting.get_quote()
-
-    # Save visualization scripts
-    save_chimera(sorted_pockets, grid, pdb_id)
-    save_pymol(sorted_pockets, grid, pdb_id)
 
 if __name__ == "__main__":
     main()
