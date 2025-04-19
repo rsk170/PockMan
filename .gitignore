@@ -6,3 +6,4 @@ pdb_files/
 pockets.pdb
 *.txt
 build/
+results/
