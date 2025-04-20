@@ -39,7 +39,7 @@ def _explain_border_bounds() -> str:
         "  • >10 Å → adds empty space; grid grows needlessly"
     )
 
-def ask_interactively() -> tuple[str, float, float, bool]:
+def ask_interactively() -> tuple[str, float, float, bool, float, float]:
     """Prompt the user until all parameters are valid, then return them."""
     # PDB path or ID
     while True:
@@ -83,9 +83,9 @@ def ask_interactively() -> tuple[str, float, float, bool]:
             break
         print(f"  ✘ {border} Å is outside the accepted range.\n{_explain_border_bounds()}\n")
 
-    # Diagonal search
+    # Planar diagonal search
     while True:
-        diag = input("Include diagonal pocket detection? (yes/no): ").strip().lower()
+        diag = input("Include planar diagonal PSP detection? (yes/no): ").strip().lower()
         if diag in {"", "no", "n"}:
             include_diagonals = False
             break
@@ -94,11 +94,37 @@ def ask_interactively() -> tuple[str, float, float, bool]:
             break
         print("  ✘ Please answer yes or no.\n")
 
-    return pdb_input, grid_size, border, include_diagonals
+    # Voxel score cut-off
+    while True:
+        vcf = input(f"Enter the cut-off score desired to select voxels for the pocket clustering (default 4): ").strip()
+        if not vcf:
+            cut_off = 4.0
+            break
+        else:
+            try:
+                cut_off = float(vcf)
+                break
+            except ValueError:
+                print("  ✘ Please enter a number.\n")
+            
+    # Distance threshold
+    while True:
+        dt = input(f"Enter the distance threshold to determine closeness between voxel and atoms (default 4): ").strip()
+        if not dt:
+            d_threshold = 4.0
+            break
+        else:
+            try:
+                d_threshold = float(vcf)
+                break
+            except ValueError:
+                print("  ✘ Please enter a number.\n")
+    
+    return pdb_input, grid_size, border, include_diagonals, cut_off, d_threshold
 
 def main() -> None:
     if len(sys.argv) == 1:
-        pdb_input, grid_size, border, include_diagonals = ask_interactively()
+        pdb_input, grid_size, border, include_diagonals, cut_off, d_threshold = ask_interactively()
 
     else:
         parser = argparse.ArgumentParser(
@@ -128,11 +154,25 @@ def main() -> None:
             action="store_true",
             help="Include diagonal pocket detection",
         )
+        parser.add_argument(
+            "--voxel_score_cut_off",
+            type=float,
+            default=4.0,
+            help="Cut-off used to determine which voxels to use to determine possible pockets, based on the voxel's score after PSP detection (default 4.0)",
+        )
+        parser.add_argument(
+            "--distance_threshold",
+            type=float,
+            default=4.0,
+            help="Maximum distance accepted between voxel and atom to assume that the atom is part of the predicted ligand binding site (default 4.0)",
+        )
         args = parser.parse_args()
         pdb_input = args.pdb_input
         grid_size = args.grid_size
         border = args.border
         include_diagonals = args.diagonals
+        cut_off = args.voxel_score_cut_off
+        d_threshold = args.distance_threshold
 
     if os.path.exists(pdb_input):
         cleaned_filepath = os.path.join(
@@ -163,12 +203,12 @@ def main() -> None:
     detector.search(diagonals=include_diagonals)
 
     cluster   = PocketCluster(grid, protein)
-    cluster.detect_pockets(diagonals=include_diagonals, cutoff=4)
+    cluster.detect_pockets(diagonals=include_diagonals, cutoff=cut_off)
     sorted_pockets = cluster.get_sorted_pockets()
 
     finder = NearbyAtomsFinder(protein, grid)
     finder.find_nearby_atoms(
-        sorted_pockets, threshold=4.0, file_tag=pdb_id, include_het=False
+        sorted_pockets, threshold=d_threshold, file_tag=pdb_id, include_het=False
     )
 
     Visualizer.save_chimera(sorted_pockets, grid, pdb_id)
