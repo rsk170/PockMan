@@ -107,7 +107,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
                 break
             except ValueError:
                 print("  ✘ Please enter a number.\n")
-            
+
     # Distance threshold
     while True:
         dt = input(f"Enter the distance threshold to determine closeness between voxel and atoms (default 4): ").strip()
@@ -120,7 +120,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
                 break
             except ValueError:
                 print("  ✘ Please enter a number.\n")
-    
+
     return pdb_input, grid_size, border, include_diagonals, cut_off, d_threshold
 
 def main() -> None:
@@ -185,7 +185,7 @@ def main() -> None:
         if pdb_file is None:
             sys.exit("Failed to clean PDB file. Exiting.")
     else:
-        print(f"Local file not found. Assuming '{pdb_input}' is a PDB ID and attempting to download...")
+        print(f"Assuming '{pdb_input}' is a PDB ID and attempting to download...")
         pdb_file = PDBHandler.download_pdb(pdb_input)
         if pdb_file is None:
             sys.exit("Failed to obtain PDB file. Exiting.")
@@ -211,10 +211,10 @@ def main() -> None:
     nearby_atoms= finder.find_nearby_atoms(
         sorted_pockets, threshold=d_threshold, file_tag=pdb_id, include_het=False
     )
-    
+
     joined_pockets = PocketJoin(pdb_id, nearby_atoms, original_scores)
     sorted_scores=joined_pockets.join_binding_sites()
-    
+
     visualize=Visualizer(pdb_id, sorted_scores)
     visualize.save_chimera()
     visualize.save_pymol()
