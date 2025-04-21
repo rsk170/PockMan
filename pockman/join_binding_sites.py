@@ -91,7 +91,7 @@ class PocketJoin:
     def print_results(self):
         result=""
         for bin_site in range(len(self.sorted_atoms)):
-            ind_result= f"Predicted ligand-binding site number {bin_site}\n"
+            ind_result= f"Predicted ligand-binding site number {bin_site+1}\n"
             ind_result+= "".join(self.sorted_atoms[bin_site])
             with open (f"Ligand_binding_site_{self.id}_{bin_site+1}.txt", "w") as f:
                 f.write(ind_result)
@@ -105,5 +105,8 @@ class PocketJoin:
         self.joined_data()
         sorted_scores = self.sort_sites()
         self.print_results()
+        
+        print(f"\033[92m✅ Pocket overlaps solved.\033[0m")
+        print(f"\033[96m📄 Individual pocket files and general poket file saved to: results/{self.id}/binding_sites\033[0m")
         
         return sorted_scores

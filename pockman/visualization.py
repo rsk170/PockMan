@@ -34,7 +34,7 @@ class Visualizer:
         
         norm_scores = self.normalize_scores()
         
-        all_pocket_vis=f"open {self.id}.pdb\nsurface\n\n"
+        all_pocket_vis=f"open ../pdb_files/{self.id}.pdb\nsurface\n\n"
         for pocket in range(len(norm_scores)): 
             file = f"Ligand_binding_site_{self.id}_{pocket+1}.txt"
             with open(glob.glob(file)[0]) as f:
@@ -50,7 +50,7 @@ class Visualizer:
             
             cmd_file = os.path.join(output_dir, f"{self.id}_{pocket+1}_chimera.cmd")
             with open(cmd_file, "w") as f:
-                f.write(f"open {self.id}.pdb\n")
+                f.write(f"open ../pdb_files/{self.id}.pdb\n")
                 f.write("surface\n\n")
                 f.write(ind_pocket_vis)
             print(f"\033[96m📄 Chimera commandscript for pocket {pocket+1} saved to: {cmd_file}\033[0m")

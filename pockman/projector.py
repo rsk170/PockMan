@@ -63,4 +63,3 @@ class ProteinProjector:
                         for k in range(neg[2], pos[2] + 1):
                             self.grid.prot_grid[i, j, k] = 1 # Mark as occupied
         print("\033[92m✅ Protein grid projection completed.\033[0m")
-        print("Protein grid shape:", self.grid.prot_grid.shape)
