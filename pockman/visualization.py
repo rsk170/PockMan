@@ -23,7 +23,7 @@ class Visualizer:
         r = norm_scores
         g = 0
         b = 1 - norm_scores
-        return f"{r:.2f} {g:.2f} {b:.2f}"
+        return f"{r:.2f}, {g:.2f}, {b:.2f}"
 
     def save_chimera(self):
         """
@@ -53,7 +53,7 @@ class Visualizer:
                 f.write(f"open ../pdb_files/{self.id}.pdb\n")
                 f.write("surface\n\n")
                 f.write(ind_pocket_vis)
-            print(f"\033[96m📄 Chimera commandscript for pocket {pocket+1} saved to: {cmd_file}\033[0m")
+            print(f"\033[96m📄 Chimera command script for pocket {pocket+1} saved to: {cmd_file}\033[0m")
             all_pocket_vis+=ind_pocket_vis
             
         cmd_file = os.path.join(output_dir, f"{self.id}_chimera.cmd")
@@ -62,39 +62,60 @@ class Visualizer:
             f.write(all_pocket_vis)
         print(f"\033[96m📄 Chimera command script saved to: {cmd_file}\033[0m")
 
-    @staticmethod
-    def save_pymol(pockets, grid, output_prefix):
+    def save_pymol(self):
         """
-        Generate a PyMOL script that visualizes the pocket centers and predicted atoms.
-
-        Parameters
-        ----------
-        pockets : list of voxel index lists
-            Each pocket is a list of (i, j, k) grid indices.
-        grid : ProteinGrid
-            Grid object with spacing and origin.
-        output_prefix : str
-            Prefix for output files.
+        Generate a PyMOL script for visualizing pockets.
+        Creates one script per pocket + a combined one.
         """
         output_dir = "results"
         os.makedirs(output_dir, exist_ok=True)
 
-        script_path = os.path.join(output_dir, f"{output_prefix}_pymol.pml")
+        norm_scores = self.normalize_scores()
 
-        with open(script_path, 'w') as f:
-            f.write("bg_color white\n")
-            f.write(f"load Ligand_binding_sites2_{output_prefix}.txt\n")
-            f.write("hide everything\n")
-            f.write("show spheres\n")
-            f.write("set sphere_scale, 0.3\n")
-            f.write("color red\n")
-            f.write("zoom\n")
+        all_pocket_vis = f"load ../pdb_files/{self.id}.pdb\nhide everything\nshow surface\ncolor grey80\nbg_color black\n\n"
 
-            for i, pocket in enumerate(pockets, 1):
-                x, y, z = Visualizer.compute_center(pocket, grid)
-                f.write(f"pseudoatom pocket_center_{i}, pos=[{x:.2f}, {y:.2f}, {z:.2f}]\n")
-                f.write(f"color orange, pocket_center_{i}\n")
-                f.write(f"set sphere_scale, 0.5, pocket_center_{i}\n")
-                f.write(f"label pocket_center_{i}, \"Pocket {i}\"\n")
+        for pocket in range(len(norm_scores)):
+            file = f"Ligand_binding_site_{self.id}_{pocket+1}.txt"
+            with open(glob.glob(file)[0]) as f:
+                pocket_content = f.readlines()[1:]
 
-        print(f"\033[94m🧬 PyMOL visualization script saved to: {script_path}\033[0m")
+            residues = set(((int(atom[22:26]), atom[20]) for atom in pocket_content))
+
+            pocket_color = self.set_color(norm_scores[pocket])  # "r g b"
+            label = f"pocket_{pocket+1}"
+            color_name = f"{label}_color"
+
+            selectors = []
+            for resnum, chain in residues:
+                selectors.append(f"(resi {resnum} and chain {chain})")
+            selection_str = " or ".join(selectors)
+
+            # Per-pocket script content
+            ind_pocket_vis = f"load ../pdb_files/{self.id}.pdb\nhide everything\nshow surface\ncolor grey80\nbg_color black\n"
+            ind_pocket_vis += f"# {label} — score {norm_scores[pocket]:.2f}\n"
+            ind_pocket_vis += f"set_color {color_name}, [{pocket_color}]\n"
+            ind_pocket_vis += f"select {label}, {selection_str}\n"
+            ind_pocket_vis += f"show surface, {label}\n"
+            ind_pocket_vis += f"set transparency, 0.0, {label}\n"
+            ind_pocket_vis += f"color {color_name}, {label}\n\n"
+
+            # Save per-pocket script
+            cmd_file = os.path.join(output_dir, f"{self.id}_{pocket+1}_pymol.pml")
+            with open(cmd_file, "w") as f:
+                f.write(ind_pocket_vis)
+            print(f"\033[95m📄 PyMOL script for pocket {pocket+1} saved to: {cmd_file}\033[0m")
+
+            # Add to combined script
+            all_pocket_vis += f"# {label}\n"
+            all_pocket_vis += f"set_color {color_name}, [{pocket_color}]\n"
+            all_pocket_vis += f"select {label}, {selection_str}\n"
+            all_pocket_vis += f"show surface, {label}\n"
+            all_pocket_vis += f"set transparency, 0.0, {label}\n"
+            all_pocket_vis += f"color {color_name}, {label}\n\n"
+
+        # Save combined script
+        cmd_file = os.path.join(output_dir, f"{self.id}_pymol.pml")
+        with open(cmd_file, "w") as f:
+            f.write(all_pocket_vis)
+        print(f"\033[95m📄 PyMOL combined script saved to: {cmd_file}\033[0m")
+

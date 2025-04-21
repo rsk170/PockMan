@@ -217,6 +217,7 @@ def main() -> None:
     
     visualize=Visualizer(pdb_id, sorted_scores)
     visualize.save_chimera()
+    visualize.save_pymol()
 
     Quote("pockman/quotes/quotes.json").get_quote()
 
