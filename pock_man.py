@@ -204,15 +204,14 @@ def main() -> None:
 
     cluster   = PocketCluster(grid, protein)
     cluster.detect_pockets(diagonals=include_diagonals, cutoff=cut_off)
-    sorted_pockets = cluster.get_sorted_pockets()
+    sorted_pockets, sorted_scores = cluster.get_sorted_pockets()
 
     finder = NearbyAtomsFinder(protein, grid)
     finder.find_nearby_atoms(
         sorted_pockets, threshold=d_threshold, file_tag=pdb_id, include_het=False
     )
-
-    Visualizer.save_chimera(sorted_pockets, grid, pdb_id)
-    Visualizer.save_pymol(sorted_pockets, grid, pdb_id)
+    visualize=Visualizer(pdb_id, sorted_scores)
+    visualize.save_chimera()
 
     Quote("pockman/quotes/quotes.json").get_quote()
 

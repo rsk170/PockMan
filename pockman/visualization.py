@@ -1,65 +1,65 @@
 import os
-import numpy as np
+import glob
 
 class Visualizer:
 
-    @staticmethod
-    def compute_center(pocket_voxels, grid):
-        """Compute the geometric center of a pocket given grid voxel indices."""
-        coords = []
-        for gx, gy, gz in pocket_voxels:
-            x = grid.x_min + gx * grid.grid_size
-            y = grid.y_min + gy * grid.grid_size
-            z = grid.z_min + gz * grid.grid_size
-            coords.append((x, y, z))
-        return np.mean(coords, axis=0)
-
-    @staticmethod
-    def save_chimera(pockets, grid, output_prefix):
+    def __init__(self, prot_id, scores):
+        self.id=prot_id
+        self.scores=scores
+        
+    def normalize_scores(self):
         """
-        Generate Chimera-compatible BILD and command script for visualizing pockets.
+        Normalize the sorted_scores to be between 0 and 1, making them suitable for coloring in Chimera.
+        """
+        if max(self.scores) == min(self.scores):
+            return [0.5 for score in self.scores]
+        return [(score - min(self.scores))/( max(self.scores)- min(self.scores)) for score in self.scores]
+    
+    @staticmethod
+    def set_color(norm_scores):
+        """
+        Setting the color of the pocket depending on its normalized score
+        """
+        r = norm_scores
+        g = 0
+        b = 1 - norm_scores
+        return f"{r:.2f} {g:.2f} {b:.2f}"
 
-        Parameters
-        ----------
-        pockets : list of voxel index lists
-            Each pocket is a list of (i, j, k) grid indices.
-        grid : ProteinGrid
-            Grid object with spacing and origin.
-        output_prefix : str
-            Prefix for output files.
+    def save_chimera(self):
+        """
+        Generate a command script for visualizing pockets.
         """
         output_dir = "results"
         os.makedirs(output_dir, exist_ok=True)
-
-        bild_file = os.path.join(output_dir, f"{output_prefix}_chimera_spheres.bild")
-        cmd_file = os.path.join(output_dir, f"{output_prefix}_chimera.cmd")
-
-        with open(bild_file, 'w') as bf:
-            bf.write(".transparency 0.0\n")  # Make spheres solid
-
-            for i, pocket in enumerate(pockets, 1):
-                center = Visualizer.compute_center(pocket, grid)
-                x, y, z = center
-
-                # Color rotation: red, orange, green
-                if i % 3 == 1:
-                    r, g, b = 1.0, 0.0, 0.0  # red
-                elif i % 3 == 2:
-                    r, g, b = 1.0, 0.65, 0.0  # orange
-                else:
-                    r, g, b = 0.13, 0.55, 0.13  # green
-
-                bf.write(f".comment Pocket {i}\n")
-                bf.write(f".color {r:.2f} {g:.2f} {b:.2f}\n")
-                bf.write(f".sphere {x:.2f} {y:.2f} {z:.2f} 2.0\n\n")
+        
+        norm_scores = self.normalize_scores()
+        
+        all_pocket_vis=f"open {self.id}.pdb\nsurface\n\n"
+        for pocket in range(len(norm_scores)): 
+            file = f"Ligand_binding_site_{self.id}_{pocket+1}.txt"
+            with open(glob.glob(file)[0]) as f:
+                pocket_content = f.readlines()[1:]
+            residues=set(((int(atom[22:26]), atom[20]) for atom in pocket_content))
+            
+            pocket_color=self.set_color(norm_scores[pocket])
+            label = f"pocket_{pocket+1}"
+            ind_pocket_vis=(f"colordef {label} {pocket_color}\n")
+            for atom in residues:
+                ind_pocket_vis+=f"color {label} :{atom[0]}.{atom[1]}\n"
+            ind_pocket_vis+="\n"
+            
+            cmd_file = os.path.join(output_dir, f"{self.id}_{pocket+1}_chimera.cmd")
+            with open(cmd_file, "w") as f:
+                f.write(f"open {self.id}.pdb\n")
+                f.write("surface\n\n")
+                f.write(ind_pocket_vis)
+            print(f"\033[96m📄 Chimera commandscript for pocket {pocket+1} saved to: {cmd_file}\033[0m")
+            all_pocket_vis+=ind_pocket_vis
+            
+        cmd_file = os.path.join(output_dir, f"{self.id}_chimera.cmd")
 
         with open(cmd_file, 'w') as f:
-            f.write("# Chimera command script for visualizing PockMan binding pockets\n")
-            f.write("background solid white\n")
-            f.write(f"open {os.path.basename(bild_file)}\n")
-            f.write("focus\n")
-
-        print(f"\033[92m✅ Chimera BILD file saved to: {bild_file}\033[0m")
+            f.write(all_pocket_vis)
         print(f"\033[96m📄 Chimera command script saved to: {cmd_file}\033[0m")
 
     @staticmethod

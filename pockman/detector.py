@@ -289,4 +289,4 @@ class PocketCluster:
         sorted_scores, sorted_pockets = zip(*sorting) if sorting else ([], [])
         print("Sorted pocket scores:", sorted_scores)
         print(f"\033[92m✅ Pocket clustering and scoring completed.\033[0m")
-        return sorted_pockets
+        return sorted_pockets, sorted_scores
