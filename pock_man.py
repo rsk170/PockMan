@@ -209,7 +209,7 @@ def main() -> None:
 
     finder = NearbyAtomsFinder(protein, grid)
     nearby_atoms= finder.find_nearby_atoms(
-        sorted_pockets, threshold=d_threshold, file_tag=pdb_id, include_het=False
+        sorted_pockets, threshold=d_threshold, file_tag=pdb_id
     )
 
     joined_pockets = PocketJoin(pdb_id, nearby_atoms, original_scores)
