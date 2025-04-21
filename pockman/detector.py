@@ -285,8 +285,8 @@ class PocketCluster:
             tuple: Sorted scores and sorted pockets.
         """
         pocket_scoring = [sum(s) / len(s) for s in self.scores]
-        sorting = sorted(zip(pocket_scoring, self.pockets), reverse=True)
-        sorted_scores, sorted_pockets = zip(*sorting) if sorting else ([], [])
+        sorting = sorted(zip(pocket_scoring, self.pockets, self.scores), reverse=True)
+        sorted_scores, sorted_pockets, sorted_original_scores = zip(*sorting) if sorting else ([], [])
         print("Sorted pocket scores:", sorted_scores)
         print(f"\033[92m✅ Pocket clustering and scoring completed.\033[0m")
-        return sorted_pockets, sorted_scores
+        return sorted_pockets, sorted_scores, sorted_original_scores

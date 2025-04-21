@@ -5,3 +5,4 @@ from .projector import ProteinProjector
 from .detector import PSPDetector, PocketCluster
 from .atoms_finder import NearbyAtomsFinder
 from .visualization import Visualizer
+from .join_binding_sites import PocketJoin

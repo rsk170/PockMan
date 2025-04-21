@@ -18,6 +18,7 @@ from pockman.detector import PSPDetector, PocketCluster
 from pockman.atoms_finder import NearbyAtomsFinder
 from pockman.quotes.import_quote import Quote
 from pockman.pdb_handler import PDBHandler
+from pockman.join_binding_sites import PocketJoin
 from pockman.visualization import Visualizer
 
 GRID_MIN, GRID_MAX   = 0.5, 3.0   # Å
@@ -204,12 +205,16 @@ def main() -> None:
 
     cluster   = PocketCluster(grid, protein)
     cluster.detect_pockets(diagonals=include_diagonals, cutoff=cut_off)
-    sorted_pockets, sorted_scores = cluster.get_sorted_pockets()
+    sorted_pockets, sorted_scores, original_scores = cluster.get_sorted_pockets()
 
     finder = NearbyAtomsFinder(protein, grid)
-    finder.find_nearby_atoms(
+    nearby_atoms= finder.find_nearby_atoms(
         sorted_pockets, threshold=d_threshold, file_tag=pdb_id, include_het=False
     )
+    
+    joined_pockets = PocketJoin(pdb_id, nearby_atoms, original_scores)
+    sorted_scores=joined_pockets.join_binding_sites()
+    
     visualize=Visualizer(pdb_id, sorted_scores)
     visualize.save_chimera()
 
