@@ -23,11 +23,11 @@ class PocketJoin:
 
     def detect_overlaps(self):
         for pocket_1 in range(len(self.atoms)):
-            residues_1=set(((int(atom[22:26]), atom[20]) for atom in self.atoms[pocket_1]))
+            residues_1=set(((atom[22:26].strip(), atom[20]) for atom in self.atoms[pocket_1]))
             coordinates_1= [[float(atom[26:37]), float(atom[37:45]), float(atom[45:53])] for atom in self.atoms[pocket_1]]
             counter="no" #counter to know if the first pocket is involved in an overlap
             for pocket_2 in range(pocket_1+1, len(self.atoms)):
-                residues_2=set(((int(atom[22:26]), atom[20]) for atom in self.atoms[pocket_2]))
+                residues_2=set(((atom[22:26].strip(), atom[20]) for atom in self.atoms[pocket_2]))
                 intersection= residues_1 & residues_2
                 union= residues_1 | residues_2
                 if len(intersection)/len(union) > 0.2:

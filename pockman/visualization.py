@@ -46,7 +46,7 @@ class Visualizer:
             else:
                 print(f"File not found: {pattern}")
                 continue
-            residues=set(((int(atom[22:26]), atom[20]) for atom in pocket_content))
+            residues=set(((atom[22:26].strip(), atom[20]) for atom in pocket_content))
 
             pocket_color=self.set_color(norm_scores[pocket])
             label = f"pocket_{pocket+1}"
@@ -91,7 +91,7 @@ class Visualizer:
             else:
                 print(f"File not found: {pattern}")
                 continue
-            residues = set(((int(atom[22:26]), atom[20]) for atom in pocket_content))
+            residues = set(((atom[22:26].strip(), atom[20]) for atom in pocket_content))
             pocket_color = self.set_color(norm_scores[pocket])  # "r g b"
             label = f"pocket_{pocket+1}"
             color_name = f"{label}_color"
