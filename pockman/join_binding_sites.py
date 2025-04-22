@@ -22,6 +22,9 @@ class PocketJoin:
         self.sorted_atoms=[]
 
     def detect_overlaps(self):
+        """
+        Detect overlaps between pockets based on shared residues and proximity.
+        """
         for pocket_1 in range(len(self.atoms)):
             residues_1=set(((atom[22:26].strip(), atom[20]) for atom in self.atoms[pocket_1]))
             coordinates_1= [[float(atom[26:37]), float(atom[37:45]), float(atom[45:53])] for atom in self.atoms[pocket_1]]
@@ -50,6 +53,9 @@ class PocketJoin:
                 self.overlaps.append(set([pocket_1]))
 
     def join_overlaps(self):
+        """
+        Join overlapping pockets into a single pocket.
+        """
         changed = True
         while changed:
             changed = False
@@ -68,6 +74,9 @@ class PocketJoin:
             self.overlaps = new_overlaps
 
     def joined_data(self):
+        """
+        Join the data of the overlapping pockets.
+        """
         for overlap in self.overlaps:
             join_atoms=[]
             join_scores=[]
@@ -92,6 +101,9 @@ class PocketJoin:
         return sorted_scores
 
     def print_results(self):
+        """
+        Print the results of the binding sites.
+        """
         output_dir = os.path.join("results", self.id, "binding_sites")
         os.makedirs(output_dir, exist_ok=True)
         result=""
@@ -107,6 +119,9 @@ class PocketJoin:
             f.write(result)
 
     def join_binding_sites(self):
+        """
+        Main function to join binding sites.
+        """
         self.detect_overlaps()
         self.join_overlaps()
         self.joined_data()

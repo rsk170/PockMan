@@ -8,12 +8,12 @@ PockMan is a bioinformatics tool designed to detect potential ligand-binding poc
 
 ## Features 🔬
 
-- **Protein Grid Projection**: Maps protein atoms onto a 3D grid.
-- **Pocket Detection**: Identifies cavities using axial and optional diagonal searches.
-- **Residue Clustering**: Scores and clusters likely ligand-binding sites.
-- **PDB File Support**: Accepts local PDB files or downloads structures from RCSB PDB.
-- **Output Visualization**: Generates Chimera & PyMOL command scripts per pocket and globally.
-- **Interactive Mode**: A user-friendly wizard guides parameter selection.
+- **🧊 Protein Grid Projection**: Maps protein atoms onto a 3D grid.
+- **🔍 Pocket Detection**: Identifies cavities using axial and optional diagonal searches.
+- **🧠 Residue Clustering**: Scores and clusters likely ligand-binding sites.
+- **📂 PDB File Support**: Accepts local PDB files or downloads structures from RCSB PDB.
+- **🎨 Output Visualization**: Generates Chimera & PyMOL command scripts per pocket and globally.
+- **✍️ Interactive Mode**: A user-friendly wizard guides parameter selection.
 
 ## Installation 📦
 
