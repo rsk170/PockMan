@@ -16,7 +16,17 @@ class Visualizer:
         return [(score - min(self.scores))/( max(self.scores)- min(self.scores)) for score in self.scores]
 
     @staticmethod
-    def set_color(norm_scores):
+    def set_color_chimera(norm_scores):
+        """
+        Setting the color of the pocket depending on its normalized score
+        """
+        r = norm_scores
+        g = 0
+        b = 1 - norm_scores
+        return f"{r:.2f} {g:.2f} {b:.2f}"
+    
+    @staticmethod
+    def set_color_pymol(norm_scores):
         """
         Setting the color of the pocket depending on its normalized score
         """
@@ -48,7 +58,7 @@ class Visualizer:
                 continue
             residues=set(((atom[22:26].strip(), atom[20]) for atom in pocket_content))
 
-            pocket_color=self.set_color(norm_scores[pocket])
+            pocket_color=self.set_color_chimera(norm_scores[pocket])
             label = f"pocket_{pocket+1}"
             ind_pocket_vis=(f"colordef {label} {pocket_color}\n")
             for atom in residues:
@@ -92,7 +102,7 @@ class Visualizer:
                 print(f"File not found: {pattern}")
                 continue
             residues = set(((atom[22:26].strip(), atom[20]) for atom in pocket_content))
-            pocket_color = self.set_color(norm_scores[pocket])  # "r g b"
+            pocket_color = self.set_color_pymol(norm_scores[pocket])  # "r g b"
             label = f"pocket_{pocket+1}"
             color_name = f"{label}_color"
 
