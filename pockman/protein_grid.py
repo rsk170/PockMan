@@ -44,5 +44,7 @@ class ProteinGrid:
         """
         Print the shapes of the protein grid and pocket grid.
         """
+        print("")
+        print("— — — — —  ANALYSIS PHASE — — — — — ")
         print(f"\033[92m🔬 Starting analysis...\033[0m")
         print("Protein grid shape:", self.prot_grid.shape)

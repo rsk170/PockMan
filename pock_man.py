@@ -27,7 +27,7 @@ BORDER_MIN, BORDER_MAX = 2.0, 10.0  # Å
 
 def _explain_grid_bounds() -> str:
     return (
-        f"Grid spacing should be between {GRID_MIN} Å and {GRID_MAX} Å.\n"
+        f"✘ Grid spacing should be between {GRID_MIN} Å and {GRID_MAX} Å.\n"
         "  • <0.5 Å  → huge memory & runtime increase for marginal accuracy.\n"
         "  • >3 Å    → too coarse: cavities merge or disappear"
     )
@@ -35,7 +35,7 @@ def _explain_grid_bounds() -> str:
 
 def _explain_border_bounds() -> str:
     return (
-        f"Border should be between {BORDER_MIN} Å and {BORDER_MAX} Å.\n"
+        f"✘ Border should be between {BORDER_MIN} Å and {BORDER_MAX} Å.\n"
         "  • <2 Å  → pockets at the surface may be truncated.\n"
         "  • >10 Å → adds empty space; grid grows needlessly"
     )
@@ -45,7 +45,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
     # PDB path or ID
     while True:
         pdb_input = input(
-            "Enter the path to the input PDB file (or a 4‑character PDB ID): "
+            "➤ Enter the path to the input PDB file (or a 4‑character PDB ID): "
         ).strip()
         if not pdb_input:
             print("  ✘ Please type a path or a PDB ID.\n")
@@ -56,7 +56,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
 
      # Grid size
     while True:
-        gs = input(f"Enter grid size in Å (default 1.0, allowed {GRID_MIN}-{GRID_MAX}): ").strip()
+        gs = input(f"➤ Enter grid size in Å (default 1.0, allowed {GRID_MIN}-{GRID_MAX}): ").strip()
         if not gs:
             grid_size = 1.0
         else:
@@ -71,7 +71,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
 
     # Border size
     while True:
-        bs = input(f"Enter border size in Å (default 5.0, allowed {BORDER_MIN}-{BORDER_MAX}): ").strip()
+        bs = input(f"➤ Enter border size in Å (default 5.0, allowed {BORDER_MIN}-{BORDER_MAX}): ").strip()
         if not bs:
             border = 5.0
         else:
@@ -86,7 +86,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
 
     # Planar diagonal search
     while True:
-        diag = input("Include planar diagonal PSP detection? (yes/no): ").strip().lower()
+        diag = input("➤ Include diagonal PSP detection? (yes/no): ").strip().lower()
         if diag in {"", "no", "n"}:
             include_diagonals = False
             break
@@ -97,7 +97,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
 
     # Voxel score cut-off
     while True:
-        vcf = input(f"Enter the cut-off score desired to select voxels for the pocket clustering (default 4): ").strip()
+        vcf = input(f"➤ Enter the cut-off score desired to select voxels for the pocket clustering (default 4): ").strip()
         if not vcf:
             cut_off = 4.0
             break
@@ -110,7 +110,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
 
     # Distance threshold
     while True:
-        dt = input(f"Enter the distance threshold to determine closeness between voxel and atoms (default 4): ").strip()
+        dt = input(f"➤ Enter the distance threshold to determine closeness between voxel and atoms (default 4): ").strip()
         if not dt:
             d_threshold = 4.0
             break
@@ -124,6 +124,12 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
     return pdb_input, grid_size, border, include_diagonals, cut_off, d_threshold
 
 def main() -> None:
+    print("╔════════════════════════════════╗")
+    print("║    🔍  Welcome to PockMan      ║")
+    print("╚════════════════════════════════╝")
+    print("")
+    print("— — — — —  INPUT PHASE — — — — — ")
+
     if len(sys.argv) == 1:
         pdb_input, grid_size, border, include_diagonals, cut_off, d_threshold = ask_interactively()
 
@@ -175,20 +181,22 @@ def main() -> None:
         cut_off = args.voxel_score_cut_off
         d_threshold = args.distance_threshold
 
+    print("")
+    print("— — — — —  PDB FETCH PHASE — — — — —")
     if os.path.exists(pdb_input):
         cleaned_filepath = os.path.join(
             os.path.dirname(pdb_input),
             os.path.splitext(os.path.basename(pdb_input))[0] + "_clean.pdb",
         )
-        print(f"Cleaning local PDB file: {pdb_input}")
+        print(f"🧹Cleaning local PDB file: {pdb_input}")
         pdb_file = PDBHandler.clean_pdb(pdb_input, cleaned_filepath)
         if pdb_file is None:
             sys.exit("Failed to clean PDB file. Exiting.")
     else:
-        print(f"Assuming '{pdb_input}' is a PDB ID and attempting to download...")
+        print(f"📥 Assuming '{pdb_input}' is a PDB ID and attempting to download...")
         pdb_file = PDBHandler.download_pdb(pdb_input)
         if pdb_file is None:
-            sys.exit("Failed to obtain PDB file. Exiting.")
+            sys.exit("❌ Failed to obtain PDB file. Exiting.")
 
     pdb_id = os.path.splitext(os.path.basename(pdb_file))[0]
 

@@ -203,7 +203,7 @@ class PSPDetector:
         for i, j, k in tqdm(
             np.ndindex(self.grid.x_bins, self.grid.y_bins, self.grid.z_bins),
             total=total_voxels,
-            desc="Detecting pockets",
+            desc="🔍 Detecting pockets",
             mininterval=0.3,
             dynamic_ncols=True,
             leave=True

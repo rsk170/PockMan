@@ -62,7 +62,7 @@ class Visualizer:
                 f.write(ind_pocket_vis)
             all_pocket_vis+=ind_pocket_vis
 
-        print(f"\033[96m📄 Chimera command scripts for  individual pockets saved to: {output_dir}/\033[0m")
+        print(f"\033[96m📂 Chimera command scripts for  individual pockets saved to: {output_dir}/\033[0m")
         cmd_file = os.path.join(output_dir, f"{self.id}_chimera.cmd")
 
         with open(cmd_file, 'w') as f:
@@ -123,7 +123,7 @@ class Visualizer:
             all_pocket_vis += f"set transparency, 0.0, {label}\n"
             all_pocket_vis += f"color {color_name}, {label}\n\n"
 
-        print(f"\033[95m📄 PyMOL command scripts for individual pockets saved to: {output_dir}/\033[0m")
+        print(f"\033[95m📂 PyMOL command scripts for individual pockets saved to: {output_dir}/\033[0m")
         # Save combined script
         cmd_file = os.path.join(output_dir, f"{self.id}_pymol.pml")
         with open(cmd_file, "w") as f:

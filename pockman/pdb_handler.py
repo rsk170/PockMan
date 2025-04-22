@@ -20,11 +20,11 @@ class PDBHandler:
                     if line.startswith("ATOM"):
                         outfile.write(line)
             if verbose:
-                print(f"Cleaned PDB file saved to: {cleaned_pdb_path}")
+                print(f"✅ Cleaned PDB file saved to: {cleaned_pdb_path}")
             return cleaned_pdb_path
         except Exception as e:
             if verbose:
-                print(f"Error cleaning PDB file: {e}")
+                print(f"❌ Error cleaning PDB file: {e}")
             return None
 
     @classmethod
@@ -37,7 +37,7 @@ class PDBHandler:
           - Saves and returns the path to the cleaned PDB file.
         """
         if not cls.is_valid_pdb_id(pdb_id):
-            print(f"Invalid PDB ID: {pdb_id}.")
+            print(f"❌ Invalid PDB ID: {pdb_id}.")
             return None
 
         os.makedirs(save_dir, exist_ok=True)
@@ -45,7 +45,7 @@ class PDBHandler:
 
         if os.path.exists(pdb_filepath) and not overwrite:
             if verbose:
-                print(f"PDB file already exists: {pdb_filepath}")
+                print(f"🗄  PDB file already exists: {pdb_filepath}")
             return pdb_filepath
 
         # Download the PDB file
@@ -54,7 +54,7 @@ class PDBHandler:
             response = requests.get(url, timeout=10)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            print(f"⚠️ Error fetching PDB {pdb_id}: {e}")
+            print(f"❌ Error fetching PDB {pdb_id}: {e}")
             return None
 
         # Save the raw PDB file
@@ -63,7 +63,8 @@ class PDBHandler:
             f.write(response.content)
 
         if verbose:
-            print(f"Downloaded PDB {pdb_id} → {raw_pdb_path}")
+            print(f"\033[92m✅ Downloaded PDB {pdb_id} → {raw_pdb_path}\033[0m")
 
         # Clean the PDB file and save as final pdb_filepath
+        print(f"🧹Cleaning local PDB file: {pdb_filepath}")
         return cls.clean_pdb(raw_pdb_path, pdb_filepath, verbose)
