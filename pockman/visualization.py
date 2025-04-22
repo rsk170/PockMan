@@ -44,7 +44,7 @@ class Visualizer:
 
         norm_scores = self.normalize_scores()
 
-        all_pocket_vis=f"open ../pdb_files/{self.id}.pdb\nsurface\n\n"
+        all_pocket_vis=f"open ../../../pdb_files/{self.id}.pdb\nsurface\n\n"
 
         for pocket in range(len(norm_scores)):
             binding_sites_dir = os.path.join("results", self.id, "binding_sites")
@@ -67,7 +67,7 @@ class Visualizer:
 
             cmd_file = os.path.join(output_dir, f"{self.id}_{pocket+1}_chimera.cmd")
             with open(cmd_file, "w") as f:
-                f.write(f"open ../pdb_files/{self.id}.pdb\n")
+                f.write(f"open ../../../pdb_files/{self.id}.pdb\n")
                 f.write("surface\n\n")
                 f.write(ind_pocket_vis)
             all_pocket_vis+=ind_pocket_vis
@@ -89,7 +89,7 @@ class Visualizer:
 
         norm_scores = self.normalize_scores()
 
-        all_pocket_vis = f"load ../pdb_files/{self.id}.pdb\nhide everything\nshow surface\ncolor grey80\nbg_color black\n\n"
+        all_pocket_vis = f"load ../../../pdb_files/{self.id}.pdb\nhide everything\nshow surface\ncolor grey80\nbg_color black\n\n"
 
         for pocket in range(len(norm_scores)):
             binding_sites_dir = os.path.join("results", self.id, "binding_sites")
@@ -112,7 +112,7 @@ class Visualizer:
             selection_str = " or ".join(selectors)
 
             # Per-pocket script content
-            ind_pocket_vis = f"load ../pdb_files/{self.id}.pdb\nhide everything\nshow surface\ncolor grey80\nbg_color black\n"
+            ind_pocket_vis = f"load ../../pdb_files/{self.id}.pdb\nhide everything\nshow surface\ncolor grey80\nbg_color black\n"
             ind_pocket_vis += f"# {label} — score {norm_scores[pocket]:.2f}\n"
             ind_pocket_vis += f"set_color {color_name}, [{pocket_color}]\n"
             ind_pocket_vis += f"select {label}, {selection_str}\n"
