@@ -86,7 +86,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
             break
         _print_range_error(border, BORDER_MIN, BORDER_MAX, " Å")
         if border < BORDER_MIN:
-            print(f"\033[93m  ⚠️  The border size must be at least {BORDER_MIN} Å.\033[0m")
+            print(f"\033[93m ⚠️  The border size must be at least {BORDER_MIN} Å.\033[0m")
         if border > BORDER_MAX:
             print(f"\033[93m ⚠️  The border size score must be at most {BORDER_MAX} Å.\033[0m")
 
@@ -121,7 +121,7 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
             break
         _print_range_error(cut_off, CUTOFF_MIN, max_cutoff)
         if cut_off < CUTOFF_MIN:
-            print(f"\033[93m  ⚠️  The cut-off score must be at least {CUTOFF_MIN}.\033[0m")
+            print(f"\033[93m ⚠️  The cut-off score must be at least {CUTOFF_MIN}.\033[0m")
         if cut_off > max_cutoff:
             print(f"\033[93m ⚠️  The cut-off score must be at most {max_cutoff}.\033[0m")
 
@@ -141,9 +141,9 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
             break
         _print_range_error(d_threshold, DISTANCE_MIN, DISTANCE_MAX)
         if d_threshold < DISTANCE_MIN:
-            print(f"\033[93m  ⚠️  The distance score must be at least {DISTANCE_MIN}.\033[0m\n")
+            print(f"\033[93m ⚠️  The distance score must be at least {DISTANCE_MIN}.\033[0m\n")
         if d_threshold > DISTANCE_MAX:
-            print(f"\033[93m  ⚠️  The distance score must be at most {DISTANCE_MAX}.\033[0m\n")
+            print(f"\033[93m ⚠️  The distance score must be at most {DISTANCE_MAX}.\033[0m\n")
 
     return pdb_input, grid_size, border, include_diagonals, cut_off, d_threshold
 
