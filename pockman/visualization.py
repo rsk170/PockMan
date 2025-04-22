@@ -112,7 +112,7 @@ class Visualizer:
             selection_str = " or ".join(selectors)
 
             # Per-pocket script content
-            ind_pocket_vis = f"load ../../pdb_files/{self.id}.pdb\nhide everything\nshow surface\ncolor grey80\nbg_color black\n"
+            ind_pocket_vis = f"load ../../../pdb_files/{self.id}.pdb\nhide everything\nshow surface\ncolor grey80\nbg_color black\n"
             ind_pocket_vis += f"# {label} — score {norm_scores[pocket]:.2f}\n"
             ind_pocket_vis += f"set_color {color_name}, [{pocket_color}]\n"
             ind_pocket_vis += f"select {label}, {selection_str}\n"
