@@ -80,6 +80,11 @@ Just type pockman with no arguments:
 $ pockman
 ```
 
+In case this does not work for you, please run in the following way:
+```bash
+$ python pock_man.py
+```
+
 You'll be prompted step-by-step to input or confirm parameters like grid size, cut-off scores, and detection options — with validation and suggestions provided along the way.
 ```bash
 ➤ Enter the path to the input PDB file (or a 4‑character PDB ID): 1e28
