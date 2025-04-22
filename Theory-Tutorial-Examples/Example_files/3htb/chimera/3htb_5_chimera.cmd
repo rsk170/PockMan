@@ -1,0 +1,64 @@
+open ../../../pdb_files/3htb.pdb
+surface
+
+colordef pocket_5 0.36 0.00 0.64
+color pocket_5 :26.A
+color pocket_5 :104.A
+color pocket_5 :139.A
+color pocket_5 :20.A
+color pocket_5 :44.A
+color pocket_5 :31.A
+color pocket_5 :11.A
+color pocket_5 :140.A
+color pocket_5 :28.A
+color pocket_5 :8.A
+color pocket_5 :64.A
+color pocket_5 :102.A
+color pocket_5 :55.A
+color pocket_5 :58.A
+color pocket_5 :12.A
+color pocket_5 :65.A
+color pocket_5 :7.A
+color pocket_5 :136.A
+color pocket_5 :34.A
+color pocket_5 :22.A
+color pocket_5 :4.A
+color pocket_5 :35.A
+color pocket_5 :54.A
+color pocket_5 :66.A
+color pocket_5 :68.A
+color pocket_5 :24.A
+color pocket_5 :29.A
+color pocket_5 :70.A
+color pocket_5 :32.A
+color pocket_5 :138.A
+color pocket_5 :141.A
+color pocket_5 :145.A
+color pocket_5 :42.A
+color pocket_5 :137.A
+color pocket_5 :13.A
+color pocket_5 :67.A
+color pocket_5 :142.A
+color pocket_5 :62.A
+color pocket_5 :18.A
+color pocket_5 :56.A
+color pocket_5 :106.A
+color pocket_5 :46.A
+color pocket_5 :30.A
+color pocket_5 :10.A
+color pocket_5 :107.A
+color pocket_5 :50.A
+color pocket_5 :63.A
+color pocket_5 :21.A
+color pocket_5 :69.A
+color pocket_5 :45.A
+color pocket_5 :47.A
+color pocket_5 :57.A
+color pocket_5 :27.A
+color pocket_5 :17.A
+color pocket_5 :105.A
+color pocket_5 :14.A
+color pocket_5 :49.A
+color pocket_5 :33.A
+color pocket_5 :43.A
+
