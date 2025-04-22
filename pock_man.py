@@ -23,22 +23,18 @@ from pockman.visualization import Visualizer
 
 GRID_MIN, GRID_MAX   = 0.5, 3.0   # Å
 BORDER_MIN, BORDER_MAX = 2.0, 10.0  # Å
+DISTANCE_MIN, DISTANCE_MAX = 3, 8
+CUTOFF_MIN, CUTOFF_MAX_DIAGONAL, CUTOFF_MAX_NON_DIAGONAL = 1, 12, 6
 
+def _print_range_error(value, minimum, maximum, unit: str = ""):
+    """
+    Print a consistent “✘ … is outside the allowed range” message,
+    followed by an optional explanation block.
+    """
+    unit_str = unit or ""
+    print(f"\033[91m✘  {value}{unit_str} is outside the allowed range [{minimum}{unit_str}–{maximum}{unit_str}].\033[0m")
+    print()
 
-def _explain_grid_bounds() -> str:
-    return (
-        f"✘ Grid spacing should be between {GRID_MIN} Å and {GRID_MAX} Å.\n"
-        "  • <0.5 Å  → huge memory & runtime increase for marginal accuracy.\n"
-        "  • >3 Å    → too coarse: cavities merge or disappear"
-    )
-
-
-def _explain_border_bounds() -> str:
-    return (
-        f"✘ Border should be between {BORDER_MIN} Å and {BORDER_MAX} Å.\n"
-        "  • <2 Å  → pockets at the surface may be truncated.\n"
-        "  • >10 Å → adds empty space; grid grows needlessly"
-    )
 
 def ask_interactively() -> tuple[str, float, float, bool, float, float]:
     """Prompt the user until all parameters are valid, then return them."""
@@ -56,18 +52,24 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
 
      # Grid size
     while True:
-        gs = input(f"➤ Enter grid size in Å (default 1.0, allowed {GRID_MIN}-{GRID_MAX}): ").strip()
+        gs = input(f"➤ Enter grid size in Å (default 1.0, allowed {GRID_MIN} - {GRID_MAX}): ").strip()
         if not gs:
             grid_size = 1.0
         else:
             try:
                 grid_size = float(gs)
             except ValueError:
-                print("  ✘ Please enter a number.\n")
+                print("\033[91m  ✘ Please enter a number.\n\033[0m")
                 continue
         if GRID_MIN <= grid_size <= GRID_MAX:
             break
-        print(f"  ✘ {grid_size} Å is outside the accepted range.\n{_explain_grid_bounds()}\n")
+        _print_range_error(grid_size, GRID_MIN, GRID_MAX, " Å")
+        if grid_size < GRID_MIN:
+            print(f"\033[93m ⚠️  The grid size must be at least {GRID_MIN} Å.\033[0m")
+        if grid_size > GRID_MAX:
+            print(f"\033[93m ⚠️  The grid size score must be at most {GRID_MAX} Å.\033[0m")
+
+
 
     # Border size
     while True:
@@ -78,48 +80,70 @@ def ask_interactively() -> tuple[str, float, float, bool, float, float]:
             try:
                 border = float(bs)
             except ValueError:
-                print("  ✘ Please enter a number.\n")
+                print("\033[91m  ✘ Please enter a number.\n\033[0m")
                 continue
         if BORDER_MIN <= border <= BORDER_MAX:
             break
-        print(f"  ✘ {border} Å is outside the accepted range.\n{_explain_border_bounds()}\n")
+        _print_range_error(border, BORDER_MIN, BORDER_MAX, " Å")
+        if border < BORDER_MIN:
+            print(f"\033[93m  ⚠️  The border size must be at least {BORDER_MIN} Å.\033[0m")
+        if border > BORDER_MAX:
+            print(f"\033[93m ⚠️  The border size score must be at most {BORDER_MAX} Å.\033[0m")
 
     # Planar diagonal search
     while True:
-        diag = input("➤ Include diagonal PSP detection? (yes/no): ").strip().lower()
+        diag = input("➤ Include planar diagonal PSP detection? (yes/no): ").strip().lower()
         if diag in {"", "no", "n"}:
             include_diagonals = False
             break
         if diag in {"yes", "y"}:
             include_diagonals = True
             break
-        print("  ✘ Please answer yes or no.\n")
+        print("\033[91m  ✘ Please answer yes or no.\n\033[0m")
 
     # Voxel score cut-off
     while True:
-        vcf = input(f"➤ Enter the cut-off score desired to select voxels for the pocket clustering (default 4): ").strip()
+        if include_diagonals:
+            max_cutoff = CUTOFF_MAX_DIAGONAL
+        else:
+            max_cutoff = CUTOFF_MAX_NON_DIAGONAL
+        vcf = input(f"➤ Enter the cut-off score desired to select voxels for the pocket clustering (default 4, allowed {CUTOFF_MIN}-{max_cutoff}): ").strip()
         if not vcf:
             cut_off = 4.0
             break
         else:
             try:
                 cut_off = float(vcf)
-                break
             except ValueError:
-                print("  ✘ Please enter a number.\n")
+                print("\033[91m  ✘ Please enter a number.\n\033[0m")
+                continue
+        if CUTOFF_MIN <= cut_off <= max_cutoff:
+            break
+        _print_range_error(cut_off, CUTOFF_MIN, max_cutoff)
+        if cut_off < CUTOFF_MIN:
+            print(f"\033[93m  ⚠️  The cut-off score must be at least {CUTOFF_MIN}.\033[0m")
+        if cut_off > max_cutoff:
+            print(f"\033[93m ⚠️  The cut-off score must be at most {max_cutoff}.\033[0m")
 
     # Distance threshold
     while True:
-        dt = input(f"➤ Enter the distance threshold to determine closeness between voxel and atoms (default 4): ").strip()
+        dt = input(f"➤ Enter the distance threshold to determine closeness between voxel and atoms (default 4, allowed {DISTANCE_MIN}-{DISTANCE_MAX}): ").strip()
         if not dt:
             d_threshold = 4.0
             break
         else:
             try:
-                d_threshold = float(vcf)
-                break
+                d_threshold = float(dt)
             except ValueError:
-                print("  ✘ Please enter a number.\n")
+                print("\033[91m  ✘ Please enter a number.\n\033[0m")
+                continue
+        if DISTANCE_MIN <= d_threshold <= DISTANCE_MAX:
+            break
+        _print_range_error(d_threshold, DISTANCE_MIN, DISTANCE_MAX)
+        if d_threshold < DISTANCE_MIN:
+            print(f"\033[93m  ⚠️  The distance score must be at least {DISTANCE_MIN}.\033[0m\n")
+        if d_threshold > DISTANCE_MAX:
+            print(f"\033[93m  ⚠️  The distance score must be at most {DISTANCE_MAX}.\033[0m\n")
 
     return pdb_input, grid_size, border, include_diagonals, cut_off, d_threshold
 

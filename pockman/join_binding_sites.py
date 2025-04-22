@@ -114,7 +114,7 @@ class PocketJoin:
         print("")
         print("— — — — —  OUTPUT PHASE — — — — —")
         print(f"\033[92m✅ Pocket overlaps solved.\033[0m")
-        print(f"\033[93m📂 Individual binding sites files saved to: results/{self.id}/binding_sites/\033[0m")
-        print(f"\033[93m📄 General binding sites file saved to: results/{self.id}/binding_sites/Ligand_binding_site_{self.id}.txt\033[0m")
+        print(f"\033[38;5;208m📂 Individual binding sites files saved to: results/{self.id}/binding_sites/\033[0m")
+        print(f"\033[38;5;208m📄 General binding sites file saved to: results/{self.id}/binding_sites/Ligand_binding_site_{self.id}.txt\033[0m")
 
         return sorted_scores
