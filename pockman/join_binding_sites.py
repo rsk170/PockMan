@@ -30,6 +30,8 @@ class PocketJoin:
                 residues_2=set(((atom[22:26].strip(), atom[20]) for atom in self.atoms[pocket_2]))
                 intersection= residues_1 & residues_2
                 union= residues_1 | residues_2
+                if not union:
+                    continue
                 if len(intersection)/len(union) > 0.2:
                     coordinates_2= [[float(atom[26:37]), float(atom[37:45]), float(atom[45:53])] for atom in self.atoms[pocket_2]]
                     center_1= [np.average([coord[0] for coord in coordinates_1]),
