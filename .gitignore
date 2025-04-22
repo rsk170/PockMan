@@ -4,6 +4,4 @@ __pycache__/
 dist/
 pdb_files/
 pockets.pdb
-*.txt
 build/
-results/
